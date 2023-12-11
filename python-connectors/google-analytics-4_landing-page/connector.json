@@ -1,0 +1,170 @@
+{
+    "meta" : {
+        "label": "Get Report",
+        "description": "",
+        "icon": "icon-bar-chart"
+    },
+    "readable": true,
+    "writable": false,
+    "kind": "PYTHON",
+    "paramsPythonSetup": "browse_google_analytics.py",
+    "params": [
+        {
+            "name": "auth_type",
+            "label": "Authentication type",
+            "type": "SELECT",
+            "description": "",
+            "selectChoices": [
+                {
+                    "value": "credentials",
+                    "label": "Credentials"
+                },
+                {
+                    "value": "oauth",
+                    "label": "Google Single Sign On"
+                }
+            ],
+            "defaultValue": "credentials"
+        },
+        {
+            "name": "credentials",
+            "label": "Credentials",
+            "type": "PRESET",
+            "parameterSetId": "google-application-credentials",
+            "visibilityCondition": "model.auth_type == 'credentials'"
+        },
+        {
+            "name": "oauth_credentials",
+            "label": "Google Single Sign On",
+            "type": "PRESET",
+            "parameterSetId": "oauth-credentials",
+            "visibilityCondition": "model.auth_type == 'oauth'"
+        },
+        {
+            "name": "property_id_select",
+            "label": "Property",
+            "type": "SELECT",
+            "visibilityCondition": "model.credentials != null || model.oauth_credentials != null",
+            "getChoicesFromPython": true,
+            "triggerParameters": ["credentials", "oauth_credentials"]
+        },
+        {
+            "name": "property_id",
+            "label": "Property ID",
+            "type": "STRING",
+            "visibilityCondition": "model.property_id_select == 'dku_manual_select'"
+        },
+        {
+            "name": "web_property_id_select",
+            "label": "Web property",
+            "type": "SELECT",
+            "visibilityCondition": "model.property_id_select.mode != 'NONE''",
+            "getChoicesFromPython": true,
+            "triggerParameters": ["property_id_select", "property_id"]
+        },
+        {
+            "name": "web_property_id",
+            "label": "Web property ID",
+            "type": "STRING",
+            "visibilityCondition": "model.web_property_id_select == 'dku_manual_select'"
+        },
+        {
+            "name": "profile_id_select",
+            "label": "Profile",
+            "type": "SELECT",
+            "visibilityCondition": "model.web_property_id_select != null",
+            "getChoicesFromPython": true,
+            "triggerParameters": ["web_property_id_select"]
+        },
+        {
+            "name": "profile_id",
+            "label": "Profile ID",
+            "type": "STRING",
+            "visibilityCondition": "model.profile_id_select == 'dku_manual_select'"
+        },
+        {
+            "name": "metrics_id_select",
+            "label": "Metrics",
+            "type": "MULTISELECT",
+            "visibilityCondition": "model.profile_id_select != null",
+            "getChoicesFromPython": true,
+            "triggerParameters": ["profile_id_select"]
+        },
+        {
+            "name": "metrics_id",
+            "label": "Metrics IDs",
+            "type": "STRING",
+            "visibilityCondition": "model.metrics_id_select == 'dku_manual_select'"
+        },
+        {
+            "name": "dimensions_id_select",
+            "label": "Dimensions",
+            "type": "MULTISELECT",
+            "visibilityCondition": "model.metrics_id_select.length > 0",
+            "getChoicesFromPython": true,
+            "triggerParameters": ["profile_id_select"]
+        },
+        {
+            "name": "dimensions_id",
+            "label": "Dimensions IDs",
+            "type": "STRING",
+            "visibilityCondition": "model.dimensions_id_select == 'dku_manual_select'"
+        },
+        {
+            "name": "segments_id_select",
+            "label": "Segments",
+            "type": "MULTISELECT",
+            "visibilityCondition": "model.metrics_id_select.length > 0",
+            "getChoicesFromPython": true,
+            "triggerParameters": ["profile_id_select"]
+        },
+        {
+            "name": "segments_id",
+            "label": "Segments IDs",
+            "type": "STRING",
+            "visibilityCondition": "model.segments_id_select == 'dku_manual_select'"
+        },
+        {
+            "name": "date_separator",
+            "type": "SEPARATOR",
+            "description": "Time range",
+            "visibilityCondition": "model.metrics_id_select.length > 0"
+        },
+        {
+            "name": "is_date_entered_manually",
+            "type": "BOOLEAN",
+            "label": " ",
+            "description": "Enter date manually",
+            "defaultValue": false,
+            "visibilityCondition": "model.metrics_id_select.length > 0"
+        },
+        {
+            "name": "start_date",
+            "type": "DATE",
+            "label": " ",
+            "description": "From",
+            "visibilityCondition": "!model.is_date_entered_manually && model.metrics_id_select.length > 0"
+        },
+        {
+            "name": "manual_start_date",
+            "type": "STRING",
+            "label": " ",
+            "description": "From",
+            "visibilityCondition": "model.is_date_entered_manually && model.metrics_id_select.length > 0"
+        },
+        {
+            "name": "end_date",
+            "type": "DATE",
+            "label": " ",
+            "description": "To",
+            "visibilityCondition": "!model.is_date_entered_manually && model.metrics_id_select.length > 0"
+        },
+        {
+            "name": "manual_end_date",
+            "type": "STRING",
+            "label": " ",
+            "description": "To",
+            "visibilityCondition": "model.is_date_entered_manually && model.metrics_id_select.length > 0"
+        }
+    ]
+}

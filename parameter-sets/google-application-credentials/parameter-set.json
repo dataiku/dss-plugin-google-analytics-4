@@ -1,0 +1,18 @@
+{
+    "meta" : {
+        "label": "Service accounts",
+        "description": "",
+        "icon": "icon-bar-chart"
+    },
+    "defaultDefinableInline": true,
+    "defaultDefinableAtProjectLevel": true,
+    "pluginParams": [
+    ],
+    "params": [
+        {
+            "name": "credentials",
+            "label": "Access credentials",
+            "type": "PASSWORD"
+        }
+    ]
+}
