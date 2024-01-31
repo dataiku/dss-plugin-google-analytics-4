@@ -42,7 +42,7 @@
         },
         {
             "name": "property_id_select",
-            "label": "Property",
+            "label": "Account",
             "type": "SELECT",
             "visibilityCondition": "model.credentials != null || model.oauth_credentials != null",
             "getChoicesFromPython": true,
@@ -50,7 +50,7 @@
         },
         {
             "name": "property_id",
-            "label": "Property ID",
+            "label": "Account ID",
             "type": "STRING",
             "visibilityCondition": "model.property_id_select == 'dku_manual_select'"
         },
@@ -70,7 +70,7 @@
         },
         {
             "name": "profile_id_select",
-            "label": "Profile",
+            "label": "View",
             "type": "SELECT",
             "visibilityCondition": "model.web_property_id_select != null",
             "getChoicesFromPython": true,
@@ -78,13 +78,14 @@
         },
         {
             "name": "profile_id",
-            "label": "Profile ID",
+            "label": "View ID",
             "type": "STRING",
             "visibilityCondition": "model.profile_id_select == 'dku_manual_select'"
         },
         {
             "name": "metrics_id_select",
-            "label": "Metrics",
+            "label": "Metrics and Goals",
+            "description": "max. 10 (min. 1 mandatory)",
             "type": "MULTISELECT",
             "visibilityCondition": "model.profile_id_select != null",
             "getChoicesFromPython": true,
@@ -99,6 +100,7 @@
         {
             "name": "dimensions_id_select",
             "label": "Dimensions",
+            "description": "max. 9 (optional)",
             "type": "MULTISELECT",
             "visibilityCondition": "model.metrics_id_select.length > 0",
             "getChoicesFromPython": true,
@@ -114,6 +116,7 @@
             "name": "segments_id_select",
             "label": "Segments",
             "type": "MULTISELECT",
+            "description": "max. 4 (optional)",
             "visibilityCondition": "model.metrics_id_select.length > 0",
             "getChoicesFromPython": true,
             "triggerParameters": ["profile_id_select"]
@@ -164,6 +167,13 @@
             "type": "STRING",
             "label": " ",
             "description": "To",
+            "visibilityCondition": "model.is_date_entered_manually && model.metrics_id_select.length > 0"
+        },
+        {
+            "name": "manual-time-doc-separator",
+            "type": "SEPARATOR",
+            "label": " ",
+            "description": "Must be in format YYYY-MM-DD",
             "visibilityCondition": "model.is_date_entered_manually && model.metrics_id_select.length > 0"
         }
     ]
