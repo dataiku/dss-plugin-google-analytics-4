@@ -41,7 +41,7 @@ Each Dataiku user has to allow google to share their data with DSS. To do so, go
 
 ## How to use
 
-- In your project flow, create a new dataset by selecting Dataset > Google Analytics > Get Reports
+- In your project flow, create a new dataset by selecting Dataset > Google Analytics > Get Reports (GA4)
 - Select the appropriate authentication mode (Service account or individual account)
 - Fill in the requested parameters in the connector's interface and
 - Press **Test & Get Schema** when ready.

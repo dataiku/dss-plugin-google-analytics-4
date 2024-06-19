@@ -1,14 +1,16 @@
 import json
+import requests
 from oauth2client.service_account import ServiceAccountCredentials
 from oauth2client.client import AccessTokenCredentials
 from googleapiclient.discovery import build
+from google_analytics_auth import GoogleAnalyticsAuth
 
 
 class GoogleAnalyticsClient():
     def __init__(self, config, reporting=False):
-        json_credentials = json.loads(config.get("credentials", {}).get("credentials", {}))
         auth_type = config.get("auth_type")
         if auth_type == "credentials":
+            json_credentials = json.loads(config.get("credentials", {}).get("credentials", {}))
             credentials = ServiceAccountCredentials.from_json_keyfile_dict(
                 json_credentials,
                 ["https://www.googleapis.com/auth/analytics.readonly"]
@@ -21,8 +23,14 @@ class GoogleAnalyticsClient():
             self.client = build("analyticsreporting", "v4", credentials=credentials)
         else:
             self.client = build("analytics", "v3", credentials=credentials)
+        self.access_token = credentials.access_token
         self.is_first_page = True
-        self.next_page_token = None  # Todo: yoky daan
+        self.next_page_token = None
+        self.offset = 0
+        self.limit = 200
+        self.row_count = 0
+        self.session = requests.Session()
+        self.session.auth = GoogleAnalyticsAuth(access_token=self.access_token)
 
     def get_account_summaries(self):
         try:
@@ -30,6 +38,32 @@ class GoogleAnalyticsClient():
         except Exception as api_error:
             return [], "Error: {}".format(api_error)
         return response, None
+
+    def get_property_list(self, item_id):
+        params = {
+            "filter": "parent:accounts/{}".format(item_id)
+        }
+        try:
+            response = self.session.get(
+                "https://analyticsadmin.googleapis.com/v1beta/properties",
+                params=params
+            )
+        except Exception as api_error:
+            return [], "Error: {}".format(api_error)
+        json_response = response.json()
+        properties = json_response.get("properties", [])
+        return properties, None
+
+    def get_property_metadata(self, property_id):
+        url = "https://analyticsdata.googleapis.com/v1beta/{}/metadata".format(property_id)
+        try:
+            response = self.session.get(
+                url
+            )
+            json_response = response.json()
+        except Exception as api_error:
+            return [], [], "Error: {}".format(api_error)
+        return json_response.get("dimensions", []), json_response.get("metrics", []), None
 
     def get_default_metrics_and_dimensions(self):
         response = self.client.metadata().columns().list(reportType='ga').execute()
@@ -58,6 +92,21 @@ class GoogleAnalyticsClient():
             return [], "Error: {}".format(api_error)
         return response, None
 
+    def get_report_v4(self, property_id, query_body):
+        url = "https://analyticsdata.googleapis.com/v1beta/{}:runReport".format(property_id)
+        try:
+            response = self.session.post(
+                url,
+                json=query_body
+            )
+        except Exception as api_error:
+            return [], "Error: {}".format(api_error)
+        status_code = response.status_code
+        if status_code == 404:
+            raise Exception("This property is not GA4. Try with the UA report.")
+        json_response = response.json()
+        return json_response, None
+
     def get_row(self, start_date, end_date, profile, metrics_ids, dimensions_ids=[], segments_ids=[]):
         while self.shoud_still_run():
             query = self.build_report_query(start_date, end_date, profile, metrics_ids, dimensions_ids, segments_ids)
@@ -69,6 +118,16 @@ class GoogleAnalyticsClient():
             for row in rows:
                 yield row
 
+    def get_v4_row(self, property_id, start_date, end_date, metrics_ids, dimensions_ids=[]):
+        while self.should_still_run_v4():
+            query = self.build_v4_report_query(start_date, end_date, metrics_ids, dimensions_ids, self.offset, self.limit)
+            response, error_message = self.get_report_v4(property_id, query)
+            self.check_for_next_v4_page(response)
+            self.offset += self.limit
+            rows = reporting_row_generator_v4(response, metrics_ids, dimensions_ids)
+            for row in rows:
+                yield row
+
     def shoud_still_run(self):
         if self.is_first_page is True:
             self.is_first_page = False
@@ -77,9 +136,21 @@ class GoogleAnalyticsClient():
             return True
         return False
 
+    def should_still_run_v4(self):
+        if self.is_first_page is True:
+            self.is_first_page = False
+            return True
+        if self.offset <= self.row_count:
+            return True
+        return False
+
     def check_for_next_page(self, response):
         self.is_first_page = False
         self.next_page_token = response.get("reports", [])[0].get("nextPageToken", None)
+
+    def check_for_next_v4_page(self, response):
+        self.is_first_page = False
+        self.row_count = response.get("rowCount")
 
     def build_report_query(self, start_date, end_date, profile, metrics_ids, dimensions_ids, segments_ids):
         report_request = {
@@ -98,6 +169,18 @@ class GoogleAnalyticsClient():
             "reportRequests": [report_request]
         }
 
+    def build_v4_report_query(self, start_date, end_date, metrics_ids, dimensions_ids, offset, limit):
+        report_request = {}
+        report_request["dateRanges"] = {
+            "startDate": start_date,
+            "endDate": end_date
+        }
+        report_request["dimensions"] = format_query_inputs(dimensions_ids, "name")
+        report_request["metrics"] = format_query_inputs(metrics_ids, "name")
+        report_request["offset"] = offset
+        report_request["limit"] = limit
+        return report_request
+
 
 def reporting_row_generator(response, metrics, dimensions):
     """
@@ -109,7 +192,6 @@ def reporting_row_generator(response, metrics, dimensions):
     Returns:
     A generator that returns rows from the query as a dictionary, indexed by column name
     """
-
     # Replace the identifiers of the dimensions and metrics for their names
     metric_names = metrics  # Todo : think of something to replace ids with names
     dimension_names = dimensions
@@ -126,6 +208,22 @@ def reporting_row_generator(response, metrics, dimensions):
             if dimensions:
                 dimensions_dict = dict(zip(dimension_names, row.get("dimensions", [])))
             yield {**dimensions_dict, **metrics_dict}
+
+
+def reporting_row_generator_v4(response, metrics, dimensions):
+    metric_names = metrics
+    dimension_names = dimensions
+    rows = response.get("rows")
+    for row in rows:
+        metrics_dict = dict(zip(metric_names, row.get("metricValues", [])[0].get("value")))
+        dimensions_dict = dict()
+        if dimensions:
+            dimension_dicts = row.get("dimensionValues", [])
+            dimension_values = []
+            for dimension_dict in dimension_dicts:
+                dimension_values.append(dimension_dict.get("value"))
+            dimensions_dict = dict(zip(dimension_names, dimension_values))
+        yield {**dimensions_dict, **metrics_dict}
 
 
 def format_query_inputs(inputs, input_type):

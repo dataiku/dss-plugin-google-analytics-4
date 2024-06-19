@@ -1,13 +1,13 @@
 {
     "meta" : {
-        "label": "Get Report",
-        "description": "",
+        "label": "Get Report (UA)",
+        "description": "Build a Google Universal Analytics report",
         "icon": "icon-bar-chart"
     },
     "readable": true,
     "writable": false,
     "kind": "PYTHON",
-    "paramsPythonSetup": "browse_google_analytics.py",
+    "paramsPythonSetup": "browse_google_analytics_v4.py",
     "params": [
         {
             "name": "auth_type",
