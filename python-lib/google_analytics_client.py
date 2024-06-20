@@ -215,7 +215,11 @@ def reporting_row_generator_v4(response, metrics, dimensions):
     dimension_names = dimensions
     rows = response.get("rows")
     for row in rows:
-        metrics_dict = dict(zip(metric_names, row.get("metricValues", [])[0].get("value")))
+        metrics_dict = {}
+        counter = 0
+        for metric_name in metric_names:
+            metrics_dict[metric_name] = row.get("metricValues", [])[counter].get("value")
+            counter += 1
         dimensions_dict = dict()
         if dimensions:
             dimension_dicts = row.get("dimensionValues", [])
