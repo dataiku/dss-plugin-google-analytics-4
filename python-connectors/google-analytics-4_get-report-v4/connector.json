@@ -69,19 +69,13 @@
             "visibilityCondition": "model.web_property_id_select == 'dku_manual_select'"
         },
         {
-            "name": "profile_id",
-            "label": "View ID",
-            "type": "STRING",
-            "visibilityCondition": "model.profile_id_select == 'dku_manual_select'"
-        },
-        {
             "name": "metrics_id_select",
             "label": "Metrics and Goals",
             "description": "max. 10 (min. 1 mandatory)",
             "type": "MULTISELECT",
-            "visibilityCondition": "(model.profile_id_select != null) || (model.web_property_id_select != null) || (model.web_property_id != null)",
+            "visibilityCondition": "(model.web_property_id_select != null) || (model.web_property_id != null)",
             "getChoicesFromPython": true,
-            "triggerParameters": ["profile_id_select", "web_property_id_select", "web_property_id"]
+            "triggerParameters": ["web_property_id_select", "web_property_id"]
         },
         {
             "name": "metrics_id",
