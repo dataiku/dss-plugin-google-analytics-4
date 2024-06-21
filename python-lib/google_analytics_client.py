@@ -105,6 +105,7 @@ class GoogleAnalyticsClient():
         if status_code == 404:
             raise Exception("This property is not GA4. Try with the UA report.")
         json_response = response.json()
+        assert_no_error(json_response)
         return json_response, None
 
     def get_row(self, start_date, end_date, profile, metrics_ids, dimensions_ids=[], segments_ids=[]):
@@ -150,7 +151,7 @@ class GoogleAnalyticsClient():
 
     def check_for_next_v4_page(self, response):
         self.is_first_page = False
-        self.row_count = response.get("rowCount")
+        self.row_count = response.get("rowCount", 0)
 
     def build_report_query(self, start_date, end_date, profile, metrics_ids, dimensions_ids, segments_ids):
         report_request = {
@@ -214,20 +215,23 @@ def reporting_row_generator_v4(response, metrics, dimensions):
     metric_names = metrics
     dimension_names = dimensions
     rows = response.get("rows")
-    for row in rows:
-        metrics_dict = {}
-        counter = 0
-        for metric_name in metric_names:
-            metrics_dict[metric_name] = row.get("metricValues", [])[counter].get("value")
-            counter += 1
-        dimensions_dict = dict()
-        if dimensions:
-            dimension_dicts = row.get("dimensionValues", [])
-            dimension_values = []
-            for dimension_dict in dimension_dicts:
-                dimension_values.append(dimension_dict.get("value"))
-            dimensions_dict = dict(zip(dimension_names, dimension_values))
-        yield {**dimensions_dict, **metrics_dict}
+    if rows is None:
+        yield dict([(metric, None) for metric in metric_names])
+    else:
+        for row in rows:
+            metrics_dict = {}
+            counter = 0
+            for metric_name in metric_names:
+                metrics_dict[metric_name] = row.get("metricValues", [])[counter].get("value")
+                counter += 1
+            dimensions_dict = dict()
+            if dimensions:
+                dimension_dicts = row.get("dimensionValues", [])
+                dimension_values = []
+                for dimension_dict in dimension_dicts:
+                    dimension_values.append(dimension_dict.get("value"))
+                dimensions_dict = dict(zip(dimension_names, dimension_values))
+            yield {**dimensions_dict, **metrics_dict}
 
 
 def format_query_inputs(inputs, input_type):
@@ -239,3 +243,11 @@ def format_query_inputs(inputs, input_type):
             }
         )
     return output
+
+
+def assert_no_error(json_response):
+    if "error" in json_response:
+        message = json_response.get("error", {}).get("message")
+        if not message:
+            message = "Error while retrieving the report: {}".format(json_response)
+        raise Exception(message)
