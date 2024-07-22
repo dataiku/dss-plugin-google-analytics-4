@@ -37,7 +37,7 @@ You have to create a service account for you GCP project:
 
 #### As a Dataiku user
 
-Each Dataiku user has to allow google to share their data with DSS. To do so, go to your profile page > Credentials > << name of the preset created by the DSS administator >> > 📝. This will trigger the SSO session where the user can log on their Google Analytics account and authorize Dataiku to access the data.
+Each Dataiku user has to allow google to share their data with DSS. To do so, go to your profile page > Credentials > << name of the preset created by the DSS administrator >> > 📝. This will trigger the SSO session where the user can log on their Google Analytics account and authorize Dataiku to access the data.
 
 ## How to use
 
