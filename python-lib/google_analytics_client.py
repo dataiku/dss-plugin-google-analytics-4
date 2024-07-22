@@ -185,7 +185,7 @@ class GoogleAnalyticsClient():
 
 def reporting_row_generator(response, metrics, dimensions):
     """
-    Returns a generator of rows for the reponse of the "batchGet" API call:
+    Returns a generator of rows for the response of the "batchGet" API call:
     https://developers.google.com/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet
 
     Note that there may be no dimensions in a response, and the dimensions input may be an empty list.
@@ -197,7 +197,7 @@ def reporting_row_generator(response, metrics, dimensions):
     metric_names = metrics  # Todo : think of something to replace ids with names
     dimension_names = dimensions
 
-    # Create geenrator of rows (check first if response is empty)
+    # Create genrator of rows (check first if response is empty)
     if not response.get("reports", [])[0].get("data", {}).get("rowCount", None):
         yield dict([(metric, None) for metric in metric_names])
 
