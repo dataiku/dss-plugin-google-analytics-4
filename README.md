@@ -1,6 +1,6 @@
 # Google Analytics 4 Plugin
 
-This Dataiku DSS plugin provides a read connector to retrive reports from [Google Analytics](https://analytics.google.com/).
+This Dataiku DSS plugin provides a read connector to retrieve reports from [Google Analytics](https://analytics.google.com/).
 
 Documentation: https://www.dataiku.com/product/plugins/google-analytics-4/
 
