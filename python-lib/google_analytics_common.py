@@ -74,33 +74,6 @@ class RecordsLimit():
         return self.counter > self.records_limit
 
 
-def assert_valid_config(config):
-
-    if not config.get("property_id_select"):
-        raise Exception("Please select the account")
-    if config.get("property_id_select") == "dku_manual_select":
-        if not config.get("property_id") or config.get("property_id") == "":
-            raise Exception("Please enter the account ID")
-
-    if not config.get("web_property_id_select"):
-        raise Exception("Please select the web property")
-    if config.get("web_property_id_select") == "dku_manual_select":
-        if not config.get("web_property_id") or config.get("web_property_id") == "":
-            raise Exception("Please enter the web property ID")
-
-    if not config.get("profile_id_select"):
-        raise Exception("Please select the view")
-    if config.get("profile_id_select") == "dku_manual_select":
-        if not config.get("profile_id") or config.get("profile_id") == "":
-            raise Exception("Please enter the view ID")
-
-    if not config.get("start_date") and not config.get("manual_start_date"):
-        raise Exception("Please enter start date")
-
-    if not config.get("end_date") and not config.get("manual_end_date"):
-        raise Exception("Please enter end date")
-
-
 def assert_valid_config_v4(config):
 
     if not config.get("property_id_select"):
