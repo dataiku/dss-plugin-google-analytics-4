@@ -11,6 +11,9 @@ def do(payload, config, plugin_config, inputs):
     parameter_name = payload.get("parameterName")
 
     if parameter_name == "property_id_select":
+        oauth_credentials = config.get("oauth_credentials", {})
+        if not oauth_credentials:
+            return choices.text_message("First select a valid preset")
         account_summaries, errors = GoogleAnalyticsClient(config).get_account_summaries()
         logger.info("property_id_select={}, error={}".format(account_summaries, errors))
         if errors:

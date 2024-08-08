@@ -8,17 +8,9 @@ from google_analytics_auth import GoogleAnalyticsAuth
 
 class GoogleAnalyticsClient():
     def __init__(self, config, reporting=False):
-        auth_type = config.get("auth_type")
-        if auth_type == "credentials":
-            json_credentials = json.loads(config.get("credentials", {}).get("credentials", {}))
-            credentials = ServiceAccountCredentials.from_json_keyfile_dict(
-                json_credentials,
-                ["https://www.googleapis.com/auth/analytics.readonly"]
-            )
-        elif auth_type == "oauth":
-            oauth_credentials = config.get("oauth_credentials", {})
-            access_token = oauth_credentials.get("access_token")
-            credentials = AccessTokenCredentials(access_token, "dss-googleanalytics-plugin/2.0")
+        oauth_credentials = config.get("oauth_credentials", {})
+        access_token = oauth_credentials.get("access_token")
+        credentials = AccessTokenCredentials(access_token, "dss-googleanalytics-plugin/2.0")
         if reporting:
             self.client = build("analyticsreporting", "v4", credentials=credentials)
         else:

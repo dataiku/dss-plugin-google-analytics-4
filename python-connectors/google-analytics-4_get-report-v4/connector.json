@@ -16,22 +16,12 @@
             "description": "",
             "selectChoices": [
                 {
-                    "value": "credentials",
-                    "label": "Credentials"
-                },
-                {
                     "value": "oauth",
                     "label": "Google Single Sign On"
                 }
             ],
-            "defaultValue": "credentials"
-        },
-        {
-            "name": "credentials",
-            "label": "Credentials",
-            "type": "PRESET",
-            "parameterSetId": "google-application-credentials",
-            "visibilityCondition": "model.auth_type == 'credentials'"
+            "visibilityCondition": false,
+            "defaultValue": "oauth"
         },
         {
             "name": "oauth_credentials",
@@ -42,11 +32,11 @@
         },
         {
             "name": "property_id_select",
-            "label": "Account",
+            "label": "Analytics Account",
             "type": "SELECT",
-            "visibilityCondition": "model.credentials != null || model.oauth_credentials != null",
+            "visibilityCondition": "model.oauth_credentials != null",
             "getChoicesFromPython": true,
-            "triggerParameters": ["credentials", "oauth_credentials"]
+            "triggerParameters": ["oauth_credentials"]
         },
         {
             "name": "property_id",
@@ -56,7 +46,7 @@
         },
         {
             "name": "web_property_id_select",
-            "label": "Web property",
+            "label": "Properties & Apps",
             "type": "SELECT",
             "visibilityCondition": "model.property_id_select.length >= 0",
             "getChoicesFromPython": true,
@@ -64,7 +54,7 @@
         },
         {
             "name": "web_property_id",
-            "label": "Web property ID",
+            "label": "Property ID",
             "type": "STRING",
             "visibilityCondition": "model.web_property_id_select == 'dku_manual_select'"
         },
