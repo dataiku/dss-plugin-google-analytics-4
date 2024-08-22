@@ -11,18 +11,6 @@ From the [Google service account tab](https://console.developers.google.com/iam-
 - Select a project > New Project and fill in the required information.
 - Enable the [Google Analytics API](https://console.cloud.google.com/apis/api/analytics.googleapis.com) for your project
 
-### Using a service account
-
-You have to create a service account for you GCP project:
-- In the service accounts tab, click on create service account
-- Fill in the details and skip step 2 if you want
-- On step 3, create a key using the JSON format
-- Save the key and open it with a text editor. You can press Done
-- Write down the service account’s email address for later use
-- Go to the plugin’s settings page to add a preset (Applications > Plugins > Google Analytics > Settings > Service Accounts > +Add preset)
-- In the `Access credentials` box, paste the JSON key copied from your text editor
-- Share the preset with the relevant Dataiku groups
-
 ### Setting up Single Sign On authentication
 
 #### As a Dataiku administrator
