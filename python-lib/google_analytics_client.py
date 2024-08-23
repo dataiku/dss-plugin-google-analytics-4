@@ -59,18 +59,6 @@ class GoogleAnalyticsClient():
         response = self.client.metadata().columns().list(reportType='ga').execute()
         return response
 
-    def get_custom_metrics(self, account_id, web_property_id):
-        response = self.client.management().customMetrics().list(accountId=account_id, webPropertyId=web_property_id,).execute()
-        return response
-
-    def get_custom_dimensions(self, account_id, web_property_id):
-        response = self.client.management().customDimensions().list(accountId=account_id, webPropertyId=web_property_id,).execute()
-        return response
-
-    def get_goals(self, account_id, web_property_id, view_id):
-        response = self.client.management().goals().list(accountId=account_id, webPropertyId=web_property_id, profileId=view_id).execute()
-        return response
-
     def get_segments(self):
         response = self.client.management().segments().list().execute()
         return response
