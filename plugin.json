@@ -1,12 +1,13 @@
 {
     "id": "google-analytics-4",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "meta": {
         "label": "Google Analytics 4",
         "description": "Enables the creation of DSS datasets with Google Analytics data",
-        "author": "Ned Martorell (Dataiku)",
+        "author": "Dataiku (Ned Martorell)",
         "icon": "icon-bar-chart",
-        "tags": [],
+        "category": "Digital Marketing",
+        "tags": ["Google", "Digital Marketing"],
         "url": "https://www.dataiku.com/product/plugins/google-analytics-4",
         "supportLevel": "NOT_SUPPORTED",
         "licenseInfo": "Apache Software License"
