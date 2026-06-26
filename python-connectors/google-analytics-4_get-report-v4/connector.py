@@ -1,6 +1,6 @@
 from dataiku.connector import Connector
 from google_analytics_client import GoogleAnalyticsClient
-from google_analytics_common import RecordsLimit, assert_valid_config_v4
+from google_analytics_common import RecordsLimit, assert_valid_config_v4, get_selected_value
 from google_analytics_constants import GA4Constants
 from safe_logger import SafeLogger
 
@@ -23,13 +23,13 @@ class GoogleAnalyticsConnector(Connector):
         else:
             self.start_date = config.get("start_date", "").split("T")[0]
             self.end_date = config.get("end_date", "").split("T")[0]
-        self.profile = config.get("profile_id_select")
         self.metrics_ids = config.get("metrics_id_select")
         self.dimensions_ids = config.get("dimensions_id_select", [])
-        self.segments_ids = config.get("segments_id_select", [])
-        self.property_id = config.get("property_id_select")
-        self.web_property_id = config.get("web_property_id_select")
-        self.client = GoogleAnalyticsClient(config, reporting=True)
+        self.metrics_ids = get_selected_value(config, "metrics_id", separator=",")
+        self.dimensions_ids = get_selected_value(config, "dimensions_id", separator=",")
+        self.property_id = get_selected_value(config, "property_id")
+        self.web_property_id = get_selected_value(config, "web_property_id")
+        self.client = GoogleAnalyticsClient(config)
 
     def get_read_schema(self):
         return None
