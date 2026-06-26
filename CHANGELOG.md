@@ -1,5 +1,9 @@
 # Changelog
 
+## [Version 1.1.0] - Feature release - 2026-06-26
+
+- Add a time range selector
+
 ## [Version 1.0.2] - Bugfixe and enhancement release - 2026-06-26
 
 - Fix calls to deprecated GA3 API
