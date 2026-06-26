@@ -1,6 +1,6 @@
 from dataiku.connector import Connector
 from google_analytics_client import GoogleAnalyticsClient
-from google_analytics_common import RecordsLimit, assert_valid_config_v4, get_selected_value
+from google_analytics_common import RecordsLimit, assert_valid_config_v4, get_selected_value, get_date_range
 from google_analytics_constants import GA4Constants
 from safe_logger import SafeLogger
 
@@ -17,12 +17,9 @@ class GoogleAnalyticsConnector(Connector):
             logger.filter_secrets(config)
         ))
         assert_valid_config_v4(config)
-        if config.get("is_date_entered_manually", False):
-            self.start_date = config.get("manual_start_date", "")
-            self.end_date = config.get("manual_end_date", "")
-        else:
-            self.start_date = config.get("start_date", "").split("T")[0]
-            self.end_date = config.get("end_date", "").split("T")[0]
+        self.start_date, self.end_date = get_date_range(config)
+        self.start_date = self.start_date.split("T")[0]
+        self.end_date = self.end_date.split("T")[0]
         self.metrics_ids = config.get("metrics_id_select")
         self.dimensions_ids = config.get("dimensions_id_select", [])
         self.metrics_ids = get_selected_value(config, "metrics_id", separator=",")
