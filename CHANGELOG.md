@@ -1,5 +1,10 @@
 # Changelog
 
+## [Version 1.0.2] - Bugfixe and enhancement release - 2026-06-26
+
+- Fix calls to deprecated GA3 API
+- Handles manual selection for metrics and dimensions
+
 ## [Version 1.0.1] - Enhancement release - 2026-02-18
 
 - Change meta author to "provider (authors)"

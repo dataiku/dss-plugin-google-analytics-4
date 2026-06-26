@@ -1,6 +1,6 @@
 {
     "id": "google-analytics-4",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "meta": {
         "label": "Google Analytics 4",
         "description": "Enables the creation of DSS datasets with Google Analytics data",

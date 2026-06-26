@@ -93,3 +93,14 @@ def assert_valid_config_v4(config):
 
     if not config.get("end_date") and not config.get("manual_end_date"):
         raise Exception("Please enter end date")
+
+
+def get_selected_value(payload, manual_key, separator=None):
+    select_key = "{}_select".format(manual_key)
+    selected_value = payload.get(select_key)
+    if selected_value == "dku_manual_select":
+        return payload.get(manual_key)
+    elif selected_value == ["dku_manual_select"]:
+        selected_value = payload.get(manual_key)
+        selected_value=selected_value.split(separator)
+    return selected_value
