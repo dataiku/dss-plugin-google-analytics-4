@@ -1,15 +1,18 @@
 {
-    "id": "google-analytics-4",
-    "version": "1.0.1",
-    "meta": {
-        "label": "Google Analytics 4",
-        "description": "Enables the creation of DSS datasets with Google Analytics data",
-        "author": "Dataiku (Ned Martorell)",
-        "icon": "icon-bar-chart",
-        "category": "Digital Marketing",
-        "tags": ["Google", "Digital Marketing"],
-        "url": "https://www.dataiku.com/product/plugins/google-analytics-4",
-        "supportLevel": "NOT_SUPPORTED",
-        "licenseInfo": "Apache Software License"
-    }
+  "id": "google-analytics-4",
+  "version": "1.1.0",
+  "meta": {
+    "label": "Google Analytics 4",
+    "description": "Enables the creation of DSS datasets with Google Analytics data",
+    "author": "Dataiku (Ned Martorell)",
+    "icon": "icon-bar-chart",
+    "category": "Digital Marketing",
+    "tags": [
+      "Google",
+      "Digital Marketing"
+    ],
+    "url": "https://www.dataiku.com/product/plugins/google-analytics-4",
+    "supportLevel": "NOT_SUPPORTED",
+    "licenseInfo": "Apache Software License"
+  }
 }
